@@ -23,25 +23,33 @@ from sklearn.model_selection import StratifiedShuffleSplit
 file_list = glob.glob('datasets/*.*')
 #print(file_list)
 
-my_list = []   # to store them
-path = "datasets/*.*"
+# my_list = []   # to store them
+# path = "datasets/*.*"
 
-for file in glob.glob(path):
+for file in glob.glob("datasets/*.*"):
     #print(file)
-    a = cv2.imread(file)
-    my_list.append(a)
+    # a = cv2.imread(file)
+    # my_list.append(a)
 
     #dataset = loadmat(r"C:\Users\Hesam\27.2.2021\datasets\Banana.mat")
     #data = dataset['dataset']
     # print(my_list)
-    dataset = loadmat(file)
+
+    input = loadmat(file)
     # print(file)
-    data = dataset['dataset']
-    # print(dataset)
+
+    data = input['dataset']
+    # header = input["__header__"]
+    # version = input["__version__"]
+    # globals = input["__globals__"]
+    # print(header)
+    # print(version)
+    # print(globals)
+    # print(data)
 
     X = data[:, 0:-1]
     y = data[:, -1]
-
+    # print(X.shape) # how to get the array shape
     #df = sns.load_dataset('tips')
     #new_data_label = df
     #data = pd.get_dummies(data[:, -1])
@@ -60,12 +68,24 @@ for file in glob.glob(path):
 
     sss = StratifiedShuffleSplit(n_splits=20, test_size=0.2, random_state=0)
     sss.get_n_splits(X, y)
+    split_part=0
+    name = file.split(".")[0].split("\\")[1]
+    # print(name)
+
+    #how to creat directory
+    # dir = "/{}_dir".format(name)
+    # parent_dir = "C:Users/Hesam/git_repo/Hesam"
+    # path = os.path.join(parent_dir,dir)
+    # os.makedirs(path, exist_ok=True)
+    # print(os.getcwd())
 
     for train_index, test_index in sss.split(X, y):
+        split_part=split_part+1
         #print("TRAIN:", train_index, "TEST:", test_index)
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
-        #print(X_train)
+        # print(X_train)
+
         #X_train = []
         #X_test = []
 
@@ -100,7 +120,7 @@ for file in glob.glob(path):
         processed = [X_train_processed, X_test_processed, y_train_processed, y_test_processed]
         #print(file)
         name = file.split(".")[0].split("\\")[1]
-        #print(name)
+        # print(name)
 
         # How to savedata in npz format
         # np.savez('mat{}.npz'.format(name), *processed)
@@ -109,18 +129,14 @@ for file in glob.glob(path):
         FramStack = np.empty((len(processed),), dtype=object)
         for i in range(len(processed)):
             FramStack[i]=processed[i]
-        savemat('processed_{}.mat'.format(name),{"FrameStack":FramStack})
 
-
-
-
-
-
+        savemat('{}_dir/processed_{}_{}.mat'.format(name,name,split_part),{"FrameStack":FramStack})
 
         # with open ('processed2222.pkl', 'wb') as processed_output:
         #     pickle.dump(processed, processed_output, pickle.HIGHEST_PROTOCOL)
         # print(X_train_processed)
         #print(y_test_processed)
+
 
 
     #processed = ['X_train_ms, X_test_ms, y_train, y_test']
