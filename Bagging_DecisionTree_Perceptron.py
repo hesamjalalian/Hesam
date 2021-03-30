@@ -15,6 +15,8 @@ from sklearn.linear_model import LogisticRegression
 import pickle
 from sklearn.datasets import load_digits
 from sklearn.linear_model import Perceptron
+import os
+
 
 def bagging_with_decision_tree(x_train, y_train):
     dt = DecisionTreeClassifier(random_state=42)
@@ -37,7 +39,6 @@ def bagging_with_perceptron(x_train, y_train):
 def boosting_with_decision_tree(x_train, y_train):
     bdt = DecisionTreeClassifier(random_state=42)
     boosting_classifiers_DecisionTree_AsBaseEstimator = AdaBoostClassifier(base_estimator=bdt, n_estimators=100, random_state=0, algorithm='SAMME')  # Instantiate a BoostingClassifier 'Boosting_classifiers_Perceptron_AsBaseEstimator'
-
     boosting_classifiers_DecisionTree_AsBaseEstimator.fit(x_train, y_train)
     y_pred = boosting_classifiers_DecisionTree_AsBaseEstimator.predict(x_test)
     accuracy = accuracy_score(y_test, y_pred)  # Evaluate the accuracy
@@ -58,25 +59,21 @@ def save_obj(obj, name ):
     with open('{}.pkl'.format(name), 'wb') as configFile:
         pickle.dump(obj, configFile)
 
-main_dir = glob.glob('preprocessed_files/*')
-
-final_results_decisiontree = []
-final_results_perceptron = []
-
 # dictionary bejaye list
 dict_final_results_Bagging_decision_tree = {}
 dict_final_results_Bagging_perceptron = {}
 dict_final_results_Boosting_decision_tree = {}
 # dict_final_results_Boosting_perceptron = {}
 
-for files in main_dir:
+for files in glob.glob('preprocessed_files/*'):
     # print(files)
     decisionTreeAccutrcies=[]
     perceptronAccurecies =[]
     boostingdecisionTreeAccutrcies = []
     # BoostingperceptronAccurecies = []
+
     for items in glob.glob("{}/*.*".format(files)):
-        # print(items)
+        print(items)
 
         data = np.load(items, allow_pickle=True)
         # print(data)
@@ -115,9 +112,9 @@ for files in main_dir:
     dict_final_results_Boosting_decision_tree["{}".format(files)] = mean(boostingdecisionTreeAccutrcies)
     # dict_final_results_Boosting_perceptron["{}".format(files)] = mean(BoostingperceptronAccurecies)
 
-# print(dict_final_results_Bagging_decision_tree)
-# print(dict_final_results_Bagging_perceptron)
-# print(dict_final_results_Boosting_decision_tree)
+print(dict_final_results_Bagging_decision_tree)
+print(dict_final_results_Bagging_perceptron)
+print(dict_final_results_Boosting_decision_tree)
 # print(dict_final_results_Boosting_perceptron)
 
 #save file
