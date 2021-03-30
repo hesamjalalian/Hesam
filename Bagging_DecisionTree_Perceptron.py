@@ -18,27 +18,51 @@ from sklearn.linear_model import Perceptron
 import os
 
 
-def bagging_with_decision_tree(x_train, y_train):
+def bagging_with_decision_tree(x_train, y_train, model_name):
     dt = DecisionTreeClassifier(random_state=42)
     Bagging_classifiers_DecisionTree_AsBaseEstimator = BaggingClassifier(base_estimator=dt, n_estimators=100, n_jobs=-1, random_state=42)
+
+    split_num = model_name.split('_')[4].split('.')[0]
+    portion = model_name.split('\\')[1]
+    model = Bagging_classifiers_DecisionTree_AsBaseEstimator
+    pkl_filename = "model_files/{}/split_{}/bagging_with_decision_tree.pkl".format(portion, split_num)
+    with open(pkl_filename, 'wb') as file:
+        pickle.dump(model, file)
+
     Bagging_classifiers_DecisionTree_AsBaseEstimator.fit(x_train, y_train)
     y_pred = Bagging_classifiers_DecisionTree_AsBaseEstimator.predict(x_test) # Predict test set labels
     accuracy = accuracy_score(y_test, y_pred) # Evaluate the accuracy
     # print('Accuracy of Bagging-decision tree base classifier: {:.3f}'.format(accuracy)) # rondesh karde
     return accuracy
 
-def bagging_with_perceptron(x_train, y_train):
+def bagging_with_perceptron(x_train, y_train, model_name):
     perc = Perceptron(max_iter=1000, eta0=0.1, tol=1e-3, random_state=42)
     Bagging_classifiers_Perceptron_AsBaseEstimator = BaggingClassifier(base_estimator=perc, n_estimators=100, n_jobs=-1, random_state=42)  # Instantiate a BaggingClassifier 'Bagging_classifiers_Perceptron_AsBaseEstimator'
+
+    split_num = model_name.split('_')[4].split('.')[0]
+    portion = model_name.split('\\')[1]
+    model = Bagging_classifiers_Perceptron_AsBaseEstimator
+    pkl_filename = "model_files/{}/split_{}/bagging_with_perceptron.pkl".format(portion, split_num)
+    with open(pkl_filename, 'wb') as file:
+        pickle.dump(model, file)
+
     Bagging_classifiers_Perceptron_AsBaseEstimator.fit(x_train, y_train)  # Fit 'bc' to the training set
     y_pred = Bagging_classifiers_Perceptron_AsBaseEstimator.predict(x_test)  # Predict test set labels
     accuracy = accuracy_score(y_test, y_pred)  # Evaluate the accuracy
     # print('Accuracy of Bagging-perceptron base Classifier: {:.3f}'.format(accuracy)) # rondesh karde
     return accuracy
 
-def boosting_with_decision_tree(x_train, y_train):
+def boosting_with_decision_tree(x_train, y_train, model_name):
     bdt = DecisionTreeClassifier(random_state=42)
     boosting_classifiers_DecisionTree_AsBaseEstimator = AdaBoostClassifier(base_estimator=bdt, n_estimators=100, random_state=0, algorithm='SAMME')  # Instantiate a BoostingClassifier 'Boosting_classifiers_Perceptron_AsBaseEstimator'
+
+    split_num = model_name.split('_')[4].split('.')[0]
+    portion = model_name.split('\\')[1]
+    model = boosting_classifiers_DecisionTree_AsBaseEstimator
+    pkl_filename = "model_files/{}/split_{}/boosting_with_decision_tree.pkl".format(portion, split_num)
+    with open(pkl_filename, 'wb') as file:
+        pickle.dump(model, file)
+
     boosting_classifiers_DecisionTree_AsBaseEstimator.fit(x_train, y_train)
     y_pred = boosting_classifiers_DecisionTree_AsBaseEstimator.predict(x_test)
     accuracy = accuracy_score(y_test, y_pred)  # Evaluate the accuracy
@@ -73,7 +97,7 @@ for files in glob.glob('preprocessed_files/*'):
     # BoostingperceptronAccurecies = []
 
     for items in glob.glob("{}/*.*".format(files)):
-        print(items)
+        # print(items)
 
         data = np.load(items, allow_pickle=True)
         # print(data)
@@ -89,10 +113,9 @@ for files in glob.glob('preprocessed_files/*'):
         # print('Shape of Y_train=>', y_train.shape)
         # print('Shape of Y_test=>', y_test.shape)
 
-        accuracy_bagging_with_decision_tree = bagging_with_decision_tree(x_train, y_train)
-        accuracy_bagging_with_perceptron = bagging_with_perceptron(x_train, y_train)
-
-        accuracy_Boosting_with_decision_tree = boosting_with_decision_tree(x_train, y_train)
+        accuracy_bagging_with_decision_tree = bagging_with_decision_tree(x_train, y_train, items)
+        accuracy_bagging_with_perceptron = bagging_with_perceptron(x_train, y_train, items)
+        accuracy_Boosting_with_decision_tree = boosting_with_decision_tree(x_train, y_train, items)
         # accuracy_Boosting_with_perceptron = Boosting_with_perceptron(x_train, y_train)
 
         decisionTreeAccutrcies.append(accuracy_bagging_with_decision_tree)  #add accuracies to list
