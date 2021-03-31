@@ -89,11 +89,20 @@ dict_final_results_Bagging_perceptron = {}
 dict_final_results_Boosting_decision_tree = {}
 # dict_final_results_Boosting_perceptron = {}
 
+dict_standard_deviation_decisionTreeAccutrcies = {}
+dict_standard_deviation_perceptronAccurecies = {}
+dict_standard_deviation_boostingdecisionTreeAccutrcies = {}
+
 for files in glob.glob('preprocessed_files/*'):
     # print(files)
     decisionTreeAccutrcies=[]
     perceptronAccurecies =[]
     boostingdecisionTreeAccutrcies = []
+
+    standard_deviation_decisionTreeAccutrcies = []
+    standard_deviation_perceptronAccurecies = []
+    standard_deviation_boostingdecisionTreeAccutrcies = []
+
     # BoostingperceptronAccurecies = []
 
     for items in glob.glob("{}/*.*".format(files)):
@@ -127,6 +136,10 @@ for files in glob.glob('preprocessed_files/*'):
     # print("file name : {}, decision tree mean accurecy : {}".format(files,mean(decisionTreeAccutrcies)))
     # print("file name : {}, perceptron mean accurecy    : {}".format(files,mean(perceptronAccurecies)))
 
+    # aaa = ("{}".format(mean(decisionTreeAccutrcies)))
+    # print(aaa)
+    # aaa = []
+
     # final_results_decisiontree.append(mean(decisionTreeAccutrcies))
     # final_results_perceptron.append(mean(perceptronAccurecies))
 
@@ -135,16 +148,51 @@ for files in glob.glob('preprocessed_files/*'):
     dict_final_results_Boosting_decision_tree["{}".format(files)] = mean(boostingdecisionTreeAccutrcies)
     # dict_final_results_Boosting_perceptron["{}".format(files)] = mean(BoostingperceptronAccurecies)
 
+    np.std(decisionTreeAccutrcies, dtype=np.float64)
+    np.std(perceptronAccurecies, dtype=np.float64)
+    np.std(boostingdecisionTreeAccutrcies, dtype=np.float64)
+
+    standard_deviation_decisionTreeAccutrcies.append(np.std(decisionTreeAccutrcies, dtype=np.float64))
+    standard_deviation_perceptronAccurecies.append(np.std(perceptronAccurecies, dtype=np.float64))
+    standard_deviation_boostingdecisionTreeAccutrcies.append(np.std(boostingdecisionTreeAccutrcies, dtype=np.float64))
+
+    # print(standard_deviation_decisionTreeAccutrcies)
+
+    dict_standard_deviation_decisionTreeAccutrcies["{}".format(files)] = mean(standard_deviation_decisionTreeAccutrcies)
+    dict_standard_deviation_perceptronAccurecies["{}".format(files)] = mean(standard_deviation_perceptronAccurecies)
+    dict_standard_deviation_boostingdecisionTreeAccutrcies["{}".format(files)] = mean(standard_deviation_boostingdecisionTreeAccutrcies)
+
 print(dict_final_results_Bagging_decision_tree)
 print(dict_final_results_Bagging_perceptron)
 print(dict_final_results_Boosting_decision_tree)
 # print(dict_final_results_Boosting_perceptron)
+
+print(dict_final_results_Bagging_decision_tree.values())
+print(dict_final_results_Bagging_perceptron.values())
+print(dict_final_results_Boosting_decision_tree.values())
+
+print(dict_standard_deviation_decisionTreeAccutrcies.values())
+print(dict_standard_deviation_perceptronAccurecies.values())
+print(dict_standard_deviation_boostingdecisionTreeAccutrcies.values())
 
 #save file
 save_obj(dict_final_results_Bagging_decision_tree,"final_results_bagging_decisiontree")
 save_obj(dict_final_results_Bagging_perceptron,"final_results_bagging_perceptron")
 save_obj(dict_final_results_Boosting_decision_tree,"final_results_boosting_decisiontree")
 # save_obj(dict_final_results_Boosting_perceptron,"final_results_boosting_decisiontree")
+
+Bagging_decision_tree = (dict_final_results_Bagging_decision_tree.values())
+Bagging_perceptron = (dict_final_results_Bagging_perceptron.values())
+Boosting_decision_tree = (dict_final_results_Boosting_decision_tree.values())
+standard_deviation_bagging_decisionTree = (dict_standard_deviation_decisionTreeAccutrcies.values())
+standard_deviation_Bagging_perceptron = (dict_standard_deviation_perceptronAccurecies.values())
+standard_deviation_boosting_decisionTree = (dict_standard_deviation_boostingdecisionTreeAccutrcies.values())
+list_of_tuples = list(zip(Bagging_decision_tree,standard_deviation_bagging_decisionTree, Bagging_perceptron,standard_deviation_Bagging_perceptron, Boosting_decision_tree,standard_deviation_boosting_decisionTree ))
+list_of_tuples
+df = pd.DataFrame(list_of_tuples,columns=['Bagging_decision_tree','standard_deviation_bagging_decisionTree', 'Bagging_perceptron', 'standard_deviation_Bagging_perceptron', 'Boosting_decision_tree', 'standard_deviation_boosting_decisionTree'])
+print(df)
+
+
 
 
 
