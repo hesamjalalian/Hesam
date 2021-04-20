@@ -61,7 +61,7 @@ for files in glob.glob('preprocessed_files/*'):
             accuracy.append(accuracyyy)
 
     dict_final_results_oracle["{}".format(files)] = mean(accuracy)
-    print(dict_final_results_oracle)
+print(dict_final_results_oracle)
 
 
 
